@@ -140,7 +140,7 @@ Unlike the inventory-aware agent, the naive symmetric dealer ignores their accum
 
 st.subheader("Inventory-Aware vs. Symmetric Benchmark")
 
-# --- Updated Metrics Table (Theme-Aware) ---
+# --- Theme-Aware Metrics Table ---
 metrics_list = [
     ("Mean Profit", "Profit", "higher"),
     ("Profit Volatility (Risk)", "Risk", "lower"),
@@ -158,7 +158,7 @@ for label, key, goal in metrics_list:
     diff = v_i - v_s
     is_i_better = (diff > 0 if goal == "higher" else diff < 0)
     
-    # Vibrant green for "better" metrics that pops on both black and white
+    # Vibrant green for better metrics, readable on black or white
     color_i = "#2ecc71" if is_i_better else "inherit"
     weight_i = "bold" if is_i_better else "normal"
     color_s = "#2ecc71" if not is_i_better else "inherit"
@@ -239,7 +239,6 @@ with tab_sweep:
     st.markdown("### Risk Aversion (γ) Sweep")
     run_sweep = st.button("Run Gamma Sweep")
     
-    # Auto-run if first boot, OR if button is clicked
     if st.session_state.sweep_params is None or run_sweep:
         with st.spinner("Running sweep..."):
             gamma_range = np.linspace(0.01, 1.0, 20)
@@ -254,16 +253,25 @@ with tab_sweep:
                 sweep_sym_sharpe.append(sym_pnl.mean() / sym_pnl.std() if sym_pnl.std() > 0 else 0)
                 
             fig_sweep = go.Figure()
-            fig_sweep.add_trace(go.Scatter(x=gamma_range, y=sweep_inv_sharpe, mode='lines+markers', name='Inventory Strategy', line=dict(color='red')))
-            fig_sweep.add_trace(go.Scatter(x=gamma_range, y=sweep_sym_sharpe, mode='lines+markers', name='Symmetric Strategy', line=dict(color='navy', dash='dot')))
-            fig_sweep.update_layout(title="Sharpe Ratio vs. Risk Aversion (γ)", xaxis_title="Risk Aversion (γ)", yaxis_title="Sharpe Ratio", hovermode="x unified")
+            # Vibrant Red
+            fig_sweep.add_trace(go.Scatter(x=gamma_range, y=sweep_inv_sharpe, mode='lines+markers', name='Inventory Strategy', line=dict(color='#e74c3c')))
+            # Vibrant Blue (Replaces Navy)
+            fig_sweep.add_trace(go.Scatter(x=gamma_range, y=sweep_sym_sharpe, mode='lines+markers', name='Symmetric Strategy', line=dict(color='#3498db', dash='dot')))
+            
+            fig_sweep.update_layout(
+                title="Sharpe Ratio vs. Risk Aversion (γ)", 
+                xaxis_title="Risk Aversion (γ)", 
+                yaxis_title="Sharpe Ratio", 
+                hovermode="x unified",
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)'
+            )
             
             st.session_state.sweep_fig = fig_sweep
             st.session_state.sweep_params = curr_params
 
-    # Render figure or show warning
     if st.session_state.sweep_fig:
-        st.plotly_chart(st.session_state.sweep_fig, use_container_width=True)
+        st.plotly_chart(st.session_state.sweep_fig, use_container_width=True, theme="streamlit")
         st.info("""
         **Interpreting the Gamma Sweep:**
         As the dealer becomes more risk-averse (higher $\gamma$), the Sharpe Ratio of the Inventory Strategy typically climbs before plateauing or slowly decaying. 

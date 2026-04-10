@@ -49,4 +49,4 @@ To model the market maker's behavior, the engine handles a few key implementatio
 ## 📖 Deep Dive & Documentation
 For the full mathematical derivation, the Hamilton-Jacobi-Bellman setup, and the comparative performance metrics, please visit the full research notebook on my website:
 
-👉 **[Read the full breakdown at jordanchongja.github.io](https://jordanchongja.github.io/)**
+👉 **[Read the full breakdown at jordanchongja.github.io](https://jordanchongja.github.io/notes/posts/Paper%20-%20High-frequency%20trading%20in%20a%20limit%20order%20book/)**
