@@ -1,7 +1,7 @@
 # The Math of Market Making: Avellaneda-Stoikov Simulation
 
-[![Launch Simulation Dashboard](https://img.shields.io/badge/Launch-Dashboard-FF4B4B?style=for-the-badge)](https://quant-market-making-single-limit-orderbook.streamlit.app/)
-[![Read Full Case Study](https://img.shields.io/badge/Read-Full_Case_Study-blue?style=for-the-badge)](https://jordanchongja.github.io/)
+[![Launch Dashboard](https://img.shields.io/badge/App-Launch_Dashboard_📊-FF4B4B?style=flat&logo=rocket)](https://avellaneda-stoikov-mm-single-limit-order.streamlit.app/)
+[![Read Case Study](https://img.shields.io/badge/Research-Full_Case_Study_📚-blue?style=flat&logo=read-the-docs&logoColor=white)](https://jordanchongja.github.io/projects/avellaneda-stoikov-MM-single-limit-order/)
 
 ![Simulation Dashboard in Action](images/dashboard_demo.gif)
 *(Above: Pitting an inventory-based stochastic control strategy against naive market making in high-frequency limit order books.)*

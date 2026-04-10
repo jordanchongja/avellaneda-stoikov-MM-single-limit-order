@@ -107,7 +107,9 @@ st.title("Market Making Strategy Performance")
 st.markdown(r"""
 This dashboard replicates the core findings of the seminal 2006 paper **"High-frequency trading in a limit order book"** by Marco Avellaneda and Sasha Stoikov. 
 
+In their seminal 2006 paper, Avellaneda and Stoikov tackle the critical problem of Inventory Risk—the danger that a market maker accumulates a massive, unintended position just as the market moves against them. While "naive" strategies quote symmetrically around the market mid-price, they often fall victim to "inventory random walks," leading to high P&L variance and potential ruin during directional price shocks.
             
+To solve this, the authors developed a stochastic control framework that replaces the market mid-price with a subjective Indifference Price. This price acts as a "fair value" that automatically adjusts based on the dealer's current holdings and risk aversion. By centering their bid-ask spread around this shifted price rather than the market mid-point, dealers can automatically incentivize trades that reduce their risk—effectively "leaning" into the order book to maintain a neutral position while still capturing the spread.         
             
 ### The Mathematical Engine
 The inventory-aware agent seeks to maximize the expected exponential utility of their terminal wealth. The objective function is defined as:
@@ -138,6 +140,7 @@ Unlike the inventory-aware agent, the naive symmetric dealer ignores their accum
 
 st.subheader("Inventory-Aware vs. Symmetric Benchmark")
 
+# --- Updated Metrics Table (Theme-Aware) ---
 metrics_list = [
     ("Mean Profit", "Profit", "higher"),
     ("Profit Volatility (Risk)", "Risk", "lower"),
@@ -145,53 +148,86 @@ metrics_list = [
     ("Inventory Variance", "Inv_Vol", "lower")
 ]
 
+# Using RGBA for transparent backgrounds that adapt to Dark/Light mode
+border_color = "rgba(128, 128, 128, 0.3)"
+header_bg = "rgba(128, 128, 128, 0.1)"
+
 rows = []
 for label, key, goal in metrics_list:
     v_i, v_s = m_i[key], m_s[key]
     diff = v_i - v_s
     is_i_better = (diff > 0 if goal == "higher" else diff < 0)
     
-    color_i = "#0f9d58" if is_i_better else "inherit"
+    # Vibrant green for "better" metrics that pops on both black and white
+    color_i = "#2ecc71" if is_i_better else "inherit"
     weight_i = "bold" if is_i_better else "normal"
-    color_s = "#0f9d58" if not is_i_better else "inherit"
+    color_s = "#2ecc71" if not is_i_better else "inherit"
     weight_s = "bold" if not is_i_better else "normal"
     symb = "+" if diff > 0 else ""
     
-    row_html = f"<tr><td style='padding:10px; border-bottom:1px solid #ddd;'><b>{label}</b></td><td style='padding:10px; border-bottom:1px solid #ddd; color:{color_i}; font-weight:{weight_i};'>{v_i:.2f}</td><td style='padding:10px; border-bottom:1px solid #ddd; color:{color_s}; font-weight:{weight_s};'>{v_s:.2f}</td><td style='padding:10px; border-bottom:1px solid #ddd;'>{symb}{diff:.2f}</td></tr>"
+    row_html = f"""
+    <tr>
+        <td style='padding:10px; border-bottom:1px solid {border_color};'><b>{label}</b></td>
+        <td style='padding:10px; border-bottom:1px solid {border_color}; color:{color_i}; font-weight:{weight_i};'>{v_i:.2f}</td>
+        <td style='padding:10px; border-bottom:1px solid {border_color}; color:{color_s}; font-weight:{weight_s};'>{v_s:.2f}</td>
+        <td style='padding:10px; border-bottom:1px solid {border_color};'>{symb}{diff:.2f}</td>
+    </tr>
+    """
     rows.append(row_html)
 
-table_html = f"<table style='width:100%; border-collapse: collapse; text-align: left; margin-bottom: 25px;'><thead><tr style='background-color: #f2f2f2;'><th style='padding:10px; border-bottom:2px solid #ddd;'>Metric</th><th style='padding:10px; border-bottom:2px solid #ddd;'>Inventory Strategy</th><th style='padding:10px; border-bottom:2px solid #ddd;'>Symmetric Strategy</th><th style='padding:10px; border-bottom:2px solid #ddd;'>Difference</th></tr></thead><tbody>{''.join(rows)}</tbody></table>"
+table_html = f"""
+<table style='width:100%; border-collapse: collapse; text-align: left; margin-bottom: 25px;'>
+    <thead>
+        <tr style='background-color: {header_bg};'>
+            <th style='padding:10px; border-bottom:2px solid {border_color};'>Metric</th>
+            <th style='padding:10px; border-bottom:2px solid {border_color};'>Inventory Strategy</th>
+            <th style='padding:10px; border-bottom:2px solid {border_color};'>Symmetric Strategy</th>
+            <th style='padding:10px; border-bottom:2px solid {border_color};'>Difference</th>
+        </tr>
+    </thead>
+    <tbody>{''.join(rows)}</tbody>
+</table>
+"""
 st.markdown(table_html, unsafe_allow_html=True)
 
-# --- 4. Visualizations ---
+# --- Updated Charts (Transparent Backgrounds) ---
 c1, c2 = st.columns(2)
 
 with c1:
     fig_q = go.Figure()
-    fig_q.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_q_inv"], name="Inventory Strategy", line=dict(color='red')))
-    fig_q.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_q_sym"], name="Symmetric Strategy", line=dict(color='navy', dash='dot')))
-    fig_q.update_layout(title="Inventory Control (Single Path)", yaxis_title="Quantity (q)")
-    st.plotly_chart(fig_q, use_container_width=True)
+    fig_q.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_q_inv"], name="Inventory", line=dict(color='#e74c3c')))
+    fig_q.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_q_sym"], name="Symmetric", line=dict(color='#3498db', dash='dot')))
+    fig_q.update_layout(
+        title="Inventory Control (Single Path)", 
+        yaxis_title="Quantity (q)",
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
+    st.plotly_chart(fig_q, use_container_width=True, theme="streamlit")
 
     fig_dist = go.Figure()
-    fig_dist.add_trace(go.Histogram(x=data["inv_pnls"][:,-1], name="Inventory Strategy", marker_color='red', opacity=0.7))
-    fig_dist.add_trace(go.Histogram(x=data["sym_pnls"][:,-1], name="Symmetric Strategy", marker_color='navy', opacity=0.3))
-    fig_dist.update_layout(barmode='overlay', title="P&L Distributions", xaxis_title="Profit ($)")
-    st.plotly_chart(fig_dist, use_container_width=True)
+    fig_dist.add_trace(go.Histogram(x=data["inv_pnls"][:,-1], name="Inventory", marker_color='#e74c3c', opacity=0.7))
+    fig_dist.add_trace(go.Histogram(x=data["sym_pnls"][:,-1], name="Symmetric", marker_color='#3498db', opacity=0.3))
+    fig_dist.update_layout(
+        barmode='overlay', 
+        title="P&L Distributions", 
+        xaxis_title="Profit ($)",
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
+    st.plotly_chart(fig_dist, use_container_width=True, theme="streamlit")
 
 with c2:
     fig_pnl = go.Figure()
-    fig_pnl.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_pnl_inv"], name="Inventory Strategy", line=dict(color='red')))
-    fig_pnl.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_pnl_sym"], name="Symmetric Strategy", line=dict(color='navy', dash='dot')))
-    fig_pnl.update_layout(title="Cumulative P&L Path (Sample Simulation)", yaxis_title="P&L ($)")
-    st.plotly_chart(fig_pnl, use_container_width=True)
-
-    st.info("""
-    ### Why the Inventory Strategy is "Better"
-    - **Risk Mitigation**: By adjusting quotes, the agent avoids the "random walk" of inventory that causes symmetric strategies to experience massive variance.
-    - **Trade-off**: The **Symmetric Strategy** often has a higher Mean Profit because it remains centered on the mid-price, capturing a higher volume of market orders.
-    - **Conclusion**: Professional dealers favor the inventory-based approach because it produces significantly more consistent P&L profiles and controlled final inventories.
-    """)
+    fig_pnl.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_pnl_inv"], name="Inventory", line=dict(color='#e74c3c')))
+    fig_pnl.add_trace(go.Scatter(x=data["sample_t"], y=data["sample_pnl_sym"], name="Symmetric", line=dict(color='#3498db', dash='dot')))
+    fig_pnl.update_layout(
+        title="Cumulative P&L Path", 
+        yaxis_title="P&L ($)",
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
+    st.plotly_chart(fig_pnl, use_container_width=True, theme="streamlit")
 
 # --- 5. Sensitivity Analysis Section ---
 st.divider()
