@@ -186,8 +186,6 @@ table_html = f"""<table style='width:100%; border-collapse: collapse; text-align
 <tbody>{''.join(rows)}</tbody>
 </table>"""
 
-
-st.markdown(table_html, unsafe_allow_html=True)
 st.markdown(table_html, unsafe_allow_html=True)
 
 # --- Updated Charts (Transparent Backgrounds) ---
