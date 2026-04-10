@@ -165,29 +165,29 @@ for label, key, goal in metrics_list:
     weight_s = "bold" if not is_i_better else "normal"
     symb = "+" if diff > 0 else ""
     
-    row_html = f"""
-    <tr>
-        <td style='padding:10px; border-bottom:1px solid {border_color};'><b>{label}</b></td>
-        <td style='padding:10px; border-bottom:1px solid {border_color}; color:{color_i}; font-weight:{weight_i};'>{v_i:.2f}</td>
-        <td style='padding:10px; border-bottom:1px solid {border_color}; color:{color_s}; font-weight:{weight_s};'>{v_s:.2f}</td>
-        <td style='padding:10px; border-bottom:1px solid {border_color};'>{symb}{diff:.2f}</td>
-    </tr>
-    """
+    row_html = f"""<tr>
+<td style='padding:10px; border-bottom:1px solid {border_color};'><b>{label}</b></td>
+<td style='padding:10px; border-bottom:1px solid {border_color}; color:{color_i}; font-weight:{weight_i};'>{v_i:.2f}</td>
+<td style='padding:10px; border-bottom:1px solid {border_color}; color:{color_s}; font-weight:{weight_s};'>{v_s:.2f}</td>
+<td style='padding:10px; border-bottom:1px solid {border_color};'>{symb}{diff:.2f}</td>
+</tr>"""
     rows.append(row_html)
 
-table_html = f"""
-<table style='width:100%; border-collapse: collapse; text-align: left; margin-bottom: 25px;'>
-    <thead>
-        <tr style='background-color: {header_bg};'>
-            <th style='padding:10px; border-bottom:2px solid {border_color};'>Metric</th>
-            <th style='padding:10px; border-bottom:2px solid {border_color};'>Inventory Strategy</th>
-            <th style='padding:10px; border-bottom:2px solid {border_color};'>Symmetric Strategy</th>
-            <th style='padding:10px; border-bottom:2px solid {border_color};'>Difference</th>
-        </tr>
-    </thead>
-    <tbody>{''.join(rows)}</tbody>
-</table>
-"""
+# Flush the main table HTML to the left as well
+table_html = f"""<table style='width:100%; border-collapse: collapse; text-align: left; margin-bottom: 25px;'>
+<thead>
+<tr style='background-color: {header_bg};'>
+<th style='padding:10px; border-bottom:2px solid {border_color};'>Metric</th>
+<th style='padding:10px; border-bottom:2px solid {border_color};'>Inventory Strategy</th>
+<th style='padding:10px; border-bottom:2px solid {border_color};'>Symmetric Strategy</th>
+<th style='padding:10px; border-bottom:2px solid {border_color};'>Difference</th>
+</tr>
+</thead>
+<tbody>{''.join(rows)}</tbody>
+</table>"""
+
+
+st.markdown(table_html, unsafe_allow_html=True)
 st.markdown(table_html, unsafe_allow_html=True)
 
 # --- Updated Charts (Transparent Backgrounds) ---

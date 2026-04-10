@@ -35,7 +35,7 @@ To model the market maker's behavior, the engine handles a few key implementatio
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/jordanchongja/quant-market-making.git](https://github.com/jordanchongja/quant-market-making.git)
+   git clone [https://github.com/jordanchongja/avellaneda-stoikov-MM-single-limit-order.git](https://github.com/jordanchongja/avellaneda-stoikov-MM-single-limit-order.git)
    ```
 2. Install the required dependencies:
    ```bash
