@@ -107,6 +107,8 @@ st.title("Market Making Strategy Performance")
 st.markdown(r"""
 This dashboard replicates the core findings of the seminal 2006 paper **"High-frequency trading in a limit order book"** by Marco Avellaneda and Sasha Stoikov. 
 
+            
+            
 ### The Mathematical Engine
 The inventory-aware agent seeks to maximize the expected exponential utility of their terminal wealth. The objective function is defined as:
 
@@ -126,10 +128,12 @@ $$ \delta^a + \delta^b = \gamma\sigma^2(T-t) + \frac{2}{\gamma}\ln\left(1 + \fra
 Unlike the inventory-aware agent, the naive symmetric dealer ignores their accumulated inventory ($q=0$). They calculate the exact same optimal spread, but anchor it directly to the market **mid-price** ($s$) rather than the shifted indifference price ($r$). While this symmetric approach frequently captures the spread, it exposes the dealer to "inventory random walks"—meaning they can accidentally accumulate massive, risky positions right as the market crashes, leading to high P&L variance.
 
 **Understanding the Parameters:**
-* **$\gamma$ (Risk Aversion):** Determines how aggressively the dealer fears holding inventory. Higher $\gamma$ widens the spread and aggressively shifts quotes to dump stock.
-* **$\sigma$ (Volatility):** The riskiness of the underlying asset. Higher $\sigma$ increases inventory risk, forcing wider spreads.
-* **$A$ (Liquidity Intensity):** The baseline frequency of market orders arriving at the exchange.
-* **$k$ (Price Decay):** Market liquidity depth. A higher $k$ means market orders dry up quickly as quotes move away from the mid-price, forcing the dealer to quote tighter spreads to get filled.
+| Parameter | Meaning | Impact on Quotes |
+| :--- | :--- | :--- |
+| **$\gamma$ (Risk Aversion)** | How much you fear inventory. | Higher = Wider spreads and more aggressive price shifts. |
+| **$\sigma$ (Volatility)** | Market risk/uncertainty. | Higher = Wider spreads to compensate for inventory risk. |
+| **$A$ (Intensity)** | Baseline order arrival rate. | Higher = More frequent trades (higher liquidity). |
+| **$k$ (Price Decay)** | Liquidity depth. | Higher = Thinner markets; requires tighter spreads to get filled. |
 """)
 
 st.subheader("Inventory-Aware vs. Symmetric Benchmark")
